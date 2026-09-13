@@ -1,0 +1,23 @@
+{
+  "business_outcome": {
+    "description": "No member exists with the supplied number. A legitimate answer, not a failure.",
+    "matched": "No member matching that number was found",
+    "name": "member_not_found",
+    "step_id": "05_click_search"
+  },
+  "capability": {
+    "id": "open_member_subaccount",
+    "version": 1
+  },
+  "drift": [],
+  "duration_s": 0.39,
+  "escalation": null,
+  "evidence_dir": "/Users/manasnikte/Downloads/interface_AI/evidence/3_replay_outcome_member_not_found",
+  "failure": null,
+  "outputs": {},
+  "recoveries": [],
+  "run_id": "3_replay_outcome_member_not_found",
+  "status": "business_outcome",
+  "steps_completed": 5,
+  "steps_total": 12
+}

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ t.label('open_subaccount') }}</title>
+  <style>{% include "_legacy.css" %}</style>
+</head>
+<body>
+<div class="pad">
+
+<table class="l" width="100%"><tr><td class="hdr" style="background:{{ t.accent }};">
+  {{ t.label('open_subaccount') }} &mdash; {{ member.name }} ({{ member.number }})
+</td></tr></table>
+
+{% if error %}<div class="err">{{ error }}</div>{% endif %}
+
+<br>
+<table class="l box" cellpadding="0" cellspacing="0">
+  <form method="post" action="{{ t.path('/members/' ~ member.number ~ '/subaccount') }}">
+  <tr>
+    <td class="k">{{ t.label('account_type') }}</td>
+    <td>
+      <select name="acct_type" aria-label="{{ t.label('account_type') }}">
+        <option value="">-- select --</option>
+        {% for at in account_types %}
+        <option value="{{ at }}" {% if values.get('acct_type') == at %}selected{% endif %}>{{ at }}</option>
+        {% endfor %}
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td class="k">{{ t.label('initial_deposit') }}</td>
+    <td><input type="text" name="deposit_amt" size="14" value="{{ values.get('deposit_amt','') }}"
+               aria-label="{{ t.label('initial_deposit') }}" autocomplete="off"></td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><input type="submit" value="{{ t.label('continue') }}"></td>
+  </tr>
+  </form>
+</table>
+
+</div>
+</body>
+</html>

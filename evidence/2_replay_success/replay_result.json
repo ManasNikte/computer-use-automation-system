@@ -1,0 +1,20 @@
+{
+  "business_outcome": null,
+  "capability": {
+    "id": "open_member_subaccount",
+    "version": 1
+  },
+  "drift": [],
+  "duration_s": 1.53,
+  "escalation": null,
+  "evidence_dir": "/Users/manasnikte/Downloads/interface_AI/evidence/2_replay_success",
+  "failure": null,
+  "outputs": {
+    "new_account_number": "[REDACTED]"
+  },
+  "recoveries": [],
+  "run_id": "2_replay_success",
+  "status": "success",
+  "steps_completed": 12,
+  "steps_total": 12
+}

@@ -1,0 +1,10 @@
+# Runtime dependencies. Deliberately short.
+#
+# LLM providers are called over stdlib HTTP rather than through vendor SDKs,
+# so adding or switching a provider is a flag rather than an install, and
+# nothing here pins a model client.
+flask>=2.2          # the target application, and the web operator console
+playwright>=1.40    # the web surface implementation
+
+# Tests only.
+pytest>=7.0

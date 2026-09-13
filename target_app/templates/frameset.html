@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head><title>{{ t.display_name }} &mdash; Servicing Console</title></head>
+<!-- A real frameset. The working area is a separate document from the nav,
+     which is exactly the shape a lot of surviving back-office apps have.
+     Any automation that assumes page == document fails here. -->
+<frameset rows="64,*" frameborder="1" border="1">
+  <frame src="{{ t.path('/nav') }}" name="navframe" scrolling="no" noresize>
+  <frame src="{{ t.path('/members/search') }}" name="mainframe">
+  <noframes><body>This console requires frame support.</body></noframes>
+</frameset>
+</html>

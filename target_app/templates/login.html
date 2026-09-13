@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ t.display_name }} &mdash; Operator Sign In</title>
+  <style>{% include "_legacy.css" %}</style>
+</head>
+<body>
+<table class="l" width="100%"><tr><td class="hdr" style="background:{{ t.accent }};">
+  {{ t.display_name }} &mdash; MeridianCore Servicing {{ t.product_version }}
+</td></tr></table>
+
+<div class="pad">
+  {% if banner %}<div class="msg">{{ banner }}</div>{% endif %}
+  {% if error %}<div class="err">{{ error }}</div>{% endif %}
+
+  <table class="l box" cellpadding="0" cellspacing="0">
+    <tr><td class="k" colspan="2" style="background:#c8d2dd;">Operator Sign In</td></tr>
+    <form method="post" action="{{ t.path('/login') }}">
+    <tr>
+      <td class="k">Operator ID</td>
+      <!-- No id, no test-id, no meaningful class. aria-label is the only
+           thing that names this control -- which is precisely what an
+           accessibility tree (web or desktop) would expose. -->
+      <td><input type="text" name="operator_id" size="24" aria-label="Operator ID" autocomplete="off"></td>
+    </tr>
+    <tr>
+      <td class="k">Passcode</td>
+      <td><input type="password" name="passcode" size="24" aria-label="Passcode" autocomplete="off"></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><input type="submit" value="Sign In"></td>
+    </tr>
+    </form>
+  </table>
+
+  <p><font color="#7b8794" size="1">
+    Sandbox instance. Synthetic data only.
+  </font></p>
+</div>
+</body>
+</html>

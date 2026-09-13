@@ -1,0 +1,53 @@
+{
+  "_comment": [
+    "Tenant registry: per-install facts and per-install deltas.",
+    "",
+    "The model: a capability is recorded ONCE against a vendor product and stored",
+    "once. A tenant entry supplies only what differs at that institution. Nothing",
+    "here re-records the flow; `resolve_for_tenant` in artifact/schema.py layers",
+    "these onto a deep copy at invocation time.",
+    "",
+    "`base_url` is per-install and is never baked into an artifact -- that is the",
+    "single most common thing that forces a per-tenant re-recording.",
+    "",
+    "`labels` is the interesting one. Two institutions running the same vendor",
+    "product typically differ by rebranding: the same control is captioned",
+    "'Member Number' at one and 'Account Holder ID' at another. Because a rebrand",
+    "renames the control everywhere at once, one substitution map fixes every",
+    "locator, checkpoint and extraction label in the artifact simultaneously.",
+    "",
+    "`steps` exists for genuine structural differences and is deliberately",
+    "last-resort. If a tenant accumulates more than a couple of step patches,",
+    "that is the signal it is really running a different product version and",
+    "should get its own recording rather than an ever-growing patch set."
+  ],
+
+  "meridian": {
+    "display_name": "Meridian Credit Union",
+    "vendor_product": "meridiancore",
+    "product_version": "8.2.1",
+    "base_url": "http://127.0.0.1:5075",
+    "_note": "The base install. Capabilities are recorded here, so it needs no overrides."
+  },
+
+  "summit": {
+    "display_name": "Summit Federal Credit Union",
+    "vendor_product": "meridiancore",
+    "product_version": "8.2.4",
+    "base_url": "http://127.0.0.1:5076",
+    "overrides": {
+      "base_path": "/servicing",
+      "labels": {
+        "Member Number": "Account Holder ID",
+        "Member Record": "Account Holder Record",
+        "Member Search": "Account Holder Lookup",
+        "Open Sub-Account": "New Sub Account",
+        "Account Type": "Sub Account Type",
+        "Initial Deposit": "Opening Deposit",
+        "Search": "Find",
+        "Continue": "Next",
+        "Submit Request": "Submit"
+      }
+    }
+  }
+}

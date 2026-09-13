@@ -1,0 +1,29 @@
+{
+  "_comment": [
+    "A scripted operator session that repairs a live run after an application",
+    "error, then hands control back so the automation finishes the job.",
+    "",
+    "Scenario: the member detail screen returned MRDN-5001 while replay was",
+    "mid-flow. There is nothing on the error page for the automation to click,",
+    "so no locator strategy can resolve and it escalates. A human takes the",
+    "session, navigates back into the console, re-runs the lookup, reopens the",
+    "record -- and hands back. Replay then retries the step it failed on, on the",
+    "SAME session, with the sign-in and everything else still intact.",
+    "",
+    "This is the point of the handoff being on a live session rather than a",
+    "fresh one: the operator does four steps, not twelve.",
+    "",
+    "Interactively this is `--operator console` (type these commands yourself),",
+    "`--operator web` (a remote console with a live view of the session), or",
+    "`--operator takeover` (use the real browser window). The scripted channel",
+    "exists so the evidence in /evidence is reproducible."
+  ],
+  "commands": [
+    "goto http://127.0.0.1:5075/",
+    "fill Member Number = 100237",
+    "click Search",
+    "click Open"
+  ],
+  "resolution": "resumed",
+  "notes": "Operator navigated back into the console, re-ran the member lookup and reopened the record, then returned control to the automation."
+}

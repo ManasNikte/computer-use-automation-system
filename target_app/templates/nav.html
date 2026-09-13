@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Navigation</title>
+  <style>{% include "_legacy.css" %}</style>
+</head>
+<body style="background:{{ t.accent }};">
+<table class="l" width="100%"><tr>
+  <td class="hdr">{{ t.display_name }} &nbsp;|&nbsp; MeridianCore Servicing {{ t.product_version }}</td>
+  <td class="hdr" align="right">
+    {% if operator %}Operator: {{ operator }} &nbsp;
+    <a href="{{ t.path('/logout') }}" target="_top" style="color:#cfe0ff;">Sign Out</a>{% endif %}
+  </td>
+</tr><tr>
+  <td colspan="2" style="background:#dde3ea;padding:4px 10px;">
+    <a href="{{ t.path('/members/search') }}" target="mainframe">{{ t.label('search_heading') }}</a>
+    &nbsp;|&nbsp; <font color="#7b8794">Transactions</font>
+    &nbsp;|&nbsp; <font color="#7b8794">Reports</font>
+  </td>
+</tr></table>
+</body>
+</html>

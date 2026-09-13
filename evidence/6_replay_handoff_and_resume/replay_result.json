@@ -1,0 +1,62 @@
+{
+  "business_outcome": null,
+  "capability": {
+    "id": "open_member_subaccount",
+    "version": 1
+  },
+  "drift": [],
+  "duration_s": 6.47,
+  "escalation": {
+    "actions": [
+      {
+        "args": {
+          "url": "http://127.0.0.1:5075/"
+        },
+        "at": 1789231051.2720902,
+        "detail": "navigated to http://127.0.0.1:5075/members/search",
+        "ok": true,
+        "verb": "goto"
+      },
+      {
+        "args": {
+          "name": "Member Number",
+          "value": "100237"
+        },
+        "at": 1789231051.3042,
+        "detail": "filled 'Member Number'",
+        "ok": true,
+        "verb": "fill"
+      },
+      {
+        "args": {
+          "name": "Search"
+        },
+        "at": 1789231051.3408298,
+        "detail": "clicked 'Search' -> http://127.0.0.1:5075/members/search",
+        "ok": true,
+        "verb": "click"
+      },
+      {
+        "args": {
+          "name": "Open"
+        },
+        "at": 1789231051.43847,
+        "detail": "clicked 'Open' -> http://127.0.0.1:5075/members/100237",
+        "ok": true,
+        "verb": "click"
+      }
+    ],
+    "notes": "Operator navigated back into the console, re-ran the member lookup and reopened the record, then returned control to the automation.",
+    "resolution": "resumed"
+  },
+  "evidence_dir": "/Users/manasnikte/Downloads/interface_AI/evidence/6_replay_handoff_and_resume",
+  "failure": null,
+  "outputs": {
+    "new_account_number": "[REDACTED]"
+  },
+  "recoveries": [],
+  "run_id": "6_replay_handoff_and_resume",
+  "status": "success",
+  "steps_completed": 12,
+  "steps_total": 12
+}

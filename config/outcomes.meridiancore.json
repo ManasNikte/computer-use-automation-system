@@ -1,0 +1,150 @@
+{
+  "_comment": [
+    "Per-APPLICATION outcome library for the MeridianCore servicing product.",
+    "",
+    "These are attached to every capability recorded against this vendor product,",
+    "because they are properties of the application rather than of any one flow:",
+    "every screen in MeridianCore can return 'no such member', expire a session,",
+    "or deny on entitlement. Recording them per-capability would mean rediscovering",
+    "the same six facts for every flow, and a happy-path discovery run never",
+    "observes any of them anyway.",
+    "",
+    "Splitting them this way is also what makes them reviewable. The business",
+    "outcomes are part of a capability's public contract -- a calling agent has to",
+    "handle 'member_not_found' -- so they need a human to have written them down",
+    "deliberately, not a model to have guessed them from one run.",
+    "",
+    "Detection strings are the exact operator-facing wording. That is a real",
+    "coupling and it is the right one: these strings are the only thing the",
+    "application gives us to distinguish 'the record does not exist' from 'the",
+    "automation broke'. Per-tenant rewording is handled by the `labels` override",
+    "(see config/tenants.json), and a string that stops matching surfaces as a",
+    "hard failure rather than a silent misclassification."
+  ],
+
+  "app_name": "MeridianCore Servicing",
+  "version_range": ">=8.0 <9.0",
+  "applies_to": ["*"],
+
+  "business_outcomes": [
+    {
+      "name": "member_not_found",
+      "description": "No member exists with the supplied number. A legitimate answer, not a failure.",
+      "terminal": true,
+      "detect": {
+        "kind": "text_present",
+        "value": "No member matching that number was found",
+        "description": "the search screen reports an empty result"
+      }
+    },
+    {
+      "name": "member_restricted",
+      "description": "The member profile is restricted; servicing actions are unavailable for it.",
+      "terminal": true,
+      "detect": {
+        "kind": "text_present",
+        "value": "This member profile is restricted",
+        "description": "the member record shows a restriction notice"
+      }
+    },
+    {
+      "name": "not_authorized",
+      "description": "The signed-in operator lacks the entitlement for this action. The caller should route to a supervisor.",
+      "terminal": true,
+      "detect": {
+        "kind": "text_present",
+        "value": "You are not authorized to open sub-accounts",
+        "description": "the application refused on entitlement grounds"
+      }
+    },
+    {
+      "name": "deposit_limit_exceeded",
+      "description": "The requested opening deposit is above the branch limit and needs supervisor approval.",
+      "terminal": true,
+      "detect": {
+        "kind": "text_present",
+        "value": "exceeds the branch limit",
+        "description": "inline validation error on the sub-account form"
+      }
+    },
+    {
+      "name": "invalid_deposit_amount",
+      "description": "The supplied deposit amount was not a valid monetary value.",
+      "terminal": true,
+      "detect": {
+        "kind": "text_present",
+        "value": "Initial deposit must be a numeric amount",
+        "description": "inline validation error on the sub-account form"
+      }
+    },
+    {
+      "name": "sign_in_rejected",
+      "description": "The operator credentials were refused.",
+      "terminal": true,
+      "detect": {
+        "kind": "text_present",
+        "value": "Sign-in failed",
+        "description": "the sign-in screen refused the credentials"
+      }
+    }
+  ],
+
+  "recovery_rules": [
+    {
+      "name": "dismiss_maintenance_notice",
+      "description": "A scheduled-maintenance interstitial can appear on any screen. Acknowledge it and carry on.",
+      "max_attempts": 1,
+      "detect": {
+        "kind": "text_present",
+        "value": "Scheduled Maintenance Notice",
+        "description": "the maintenance interstitial is covering the working area"
+      },
+      "action": {
+        "kind": "click",
+        "locator": {
+          "description": "the Acknowledge link on the maintenance notice",
+          "strategies": [
+            {"kind": "role_name", "role": "link", "name": "Acknowledge", "frame": "name=mainframe"},
+            {"kind": "role_name", "role": "link", "name": "Acknowledge", "frame": ""},
+            {"kind": "text", "value": "Acknowledge", "frame": "name=mainframe"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "reauthenticate_on_session_expiry",
+      "description": "The session can expire mid-flow. Re-run the sign-in steps and resume where we left off.",
+      "max_attempts": 1,
+      "detect": {
+        "kind": "text_present",
+        "value": "Your session has expired",
+        "description": "the application bounced us back to the sign-in screen"
+      },
+      "action": {
+        "kind": "restart_from_step",
+        "step_id": "@first",
+        "_comment": [
+          "Re-execute the steps from here up to (not including) the one that was",
+          "interrupted, then retry it. '@first' means the whole prefix, which for",
+          "this app re-runs sign-in and re-navigates to the record.",
+          "",
+          "The executor REFUSES this recovery if any step in the prefix is",
+          "irreversible, and escalates instead. Silently replaying a prefix that",
+          "contains a commit would post the transaction twice -- a recovery",
+          "mechanism must never be able to cause the thing it is recovering from."
+        ]
+      }
+    },
+    {
+      "name": "retry_transient_slow_load",
+      "description": "The application is intermittently slow. Wait and re-attempt the step before calling it a failure.",
+      "max_attempts": 2,
+      "detect": {
+        "kind": "on_timeout",
+        "value": "",
+        "description": "engaged when the surface times out, not by anything visible on screen"
+      },
+      "action": {"kind": "retry_step", "delay_ms": 1500}
+    }
+  ]
+}

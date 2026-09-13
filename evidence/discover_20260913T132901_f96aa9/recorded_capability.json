@@ -1,0 +1,653 @@
+{
+  "applies_to": [
+    "*"
+  ],
+  "business_outcomes": [
+    {
+      "description": "No member exists with the supplied number. A legitimate answer, not a failure.",
+      "detect": {
+        "description": "the search screen reports an empty result",
+        "kind": "text_present",
+        "value": "No member matching that number was found"
+      },
+      "name": "member_not_found",
+      "terminal": true
+    },
+    {
+      "description": "The member profile is restricted; servicing actions are unavailable for it.",
+      "detect": {
+        "description": "the member record shows a restriction notice",
+        "kind": "text_present",
+        "value": "This member profile is restricted"
+      },
+      "name": "member_restricted",
+      "terminal": true
+    },
+    {
+      "description": "The signed-in operator lacks the entitlement for this action. The caller should route to a supervisor.",
+      "detect": {
+        "description": "the application refused on entitlement grounds",
+        "kind": "text_present",
+        "value": "You are not authorized to open sub-accounts"
+      },
+      "name": "not_authorized",
+      "terminal": true
+    },
+    {
+      "description": "The requested opening deposit is above the branch limit and needs supervisor approval.",
+      "detect": {
+        "description": "inline validation error on the sub-account form",
+        "kind": "text_present",
+        "value": "exceeds the branch limit"
+      },
+      "name": "deposit_limit_exceeded",
+      "terminal": true
+    },
+    {
+      "description": "The supplied deposit amount was not a valid monetary value.",
+      "detect": {
+        "description": "inline validation error on the sub-account form",
+        "kind": "text_present",
+        "value": "Initial deposit must be a numeric amount"
+      },
+      "name": "invalid_deposit_amount",
+      "terminal": true
+    },
+    {
+      "description": "The operator credentials were refused.",
+      "detect": {
+        "description": "the sign-in screen refused the credentials",
+        "kind": "text_present",
+        "value": "Sign-in failed"
+      },
+      "name": "sign_in_rejected",
+      "terminal": true
+    }
+  ],
+  "description": "Sign in, look up member {member_id}, open a new {account_type} sub-account with an initial deposit of 50, and report the new account number",
+  "final_checkpoint": {
+    "description": "the confirmation screen showing the result is displayed",
+    "kind": "text_present",
+    "value": "New Account Number"
+  },
+  "id": "open_member_subaccount_llm",
+  "inputs": [
+    {
+      "description": "operator id",
+      "enum": null,
+      "example": "svc_admin",
+      "name": "operator_id",
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    {
+      "description": "passcode",
+      "enum": null,
+      "example": "",
+      "name": "passcode",
+      "required": true,
+      "sensitive": true,
+      "type": "string"
+    },
+    {
+      "description": "member id",
+      "enum": null,
+      "example": "100237",
+      "name": "member_id",
+      "required": true,
+      "sensitive": false,
+      "type": "number"
+    },
+    {
+      "description": "account type",
+      "enum": null,
+      "example": "Savings",
+      "name": "account_type",
+      "required": true,
+      "sensitive": false,
+      "type": "string"
+    },
+    {
+      "description": "initial deposit",
+      "enum": null,
+      "example": "50",
+      "name": "initial_deposit",
+      "required": true,
+      "sensitive": false,
+      "type": "number"
+    }
+  ],
+  "name": "Open Member Subaccount Llm",
+  "outputs": [
+    {
+      "description": "value read from the 'New Account Number' field",
+      "name": "new_account_number",
+      "redact_in_evidence": true,
+      "source_step_id": "12_extract_new_account_number",
+      "type": "string"
+    }
+  ],
+  "overrides": {
+    "summit": {
+      "base_path": "/servicing",
+      "labels": {
+        "Account Type": "Sub Account Type",
+        "Continue": "Next",
+        "Initial Deposit": "Opening Deposit",
+        "Member Number": "Account Holder ID",
+        "Member Record": "Account Holder Record",
+        "Member Search": "Account Holder Lookup",
+        "Open Sub-Account": "New Sub Account",
+        "Search": "Find",
+        "Submit Request": "Submit"
+      }
+    }
+  },
+  "provenance": {
+    "discovered_at": 1789320593.3811688,
+    "discovered_by": "groq:openai/gpt-oss-120b",
+    "human_intervened": true,
+    "recorded_on_tenant": "meridian",
+    "recorded_on_version": "8.2.1",
+    "run_id": "discover_20260913T132901_f96aa9",
+    "steps_taken": 12
+  },
+  "recovery_rules": [
+    {
+      "action": {
+        "kind": "click",
+        "locator": {
+          "description": "the Acknowledge link on the maintenance notice",
+          "strategies": [
+            {
+              "frame": "name=mainframe",
+              "kind": "role_name",
+              "name": "Acknowledge",
+              "role": "link"
+            },
+            {
+              "frame": "",
+              "kind": "role_name",
+              "name": "Acknowledge",
+              "role": "link"
+            },
+            {
+              "frame": "name=mainframe",
+              "kind": "text",
+              "value": "Acknowledge"
+            }
+          ]
+        }
+      },
+      "description": "A scheduled-maintenance interstitial can appear on any screen. Acknowledge it and carry on.",
+      "detect": {
+        "description": "the maintenance interstitial is covering the working area",
+        "kind": "text_present",
+        "value": "Scheduled Maintenance Notice"
+      },
+      "max_attempts": 1,
+      "name": "dismiss_maintenance_notice"
+    },
+    {
+      "action": {
+        "_comment": [
+          "Re-execute the steps from here up to (not including) the one that was",
+          "interrupted, then retry it. '@first' means the whole prefix, which for",
+          "this app re-runs sign-in and re-navigates to the record.",
+          "",
+          "The executor REFUSES this recovery if any step in the prefix is",
+          "irreversible, and escalates instead. Silently replaying a prefix that",
+          "contains a commit would post the transaction twice -- a recovery",
+          "mechanism must never be able to cause the thing it is recovering from."
+        ],
+        "kind": "restart_from_step",
+        "step_id": "@first"
+      },
+      "description": "The session can expire mid-flow. Re-run the sign-in steps and resume where we left off.",
+      "detect": {
+        "description": "the application bounced us back to the sign-in screen",
+        "kind": "text_present",
+        "value": "Your session has expired"
+      },
+      "max_attempts": 1,
+      "name": "reauthenticate_on_session_expiry"
+    },
+    {
+      "action": {
+        "delay_ms": 1500,
+        "kind": "retry_step"
+      },
+      "description": "The application is intermittently slow. Wait and re-attempt the step before calling it a failure.",
+      "detect": {
+        "description": "engaged when the surface times out, not by anything visible on screen",
+        "kind": "on_timeout",
+        "value": ""
+      },
+      "max_attempts": 2,
+      "name": "retry_transient_slow_load"
+    }
+  ],
+  "schema_version": "cua.capability/v1",
+  "status": "draft",
+  "steps": [
+    {
+      "action": "fill",
+      "checkpoint": null,
+      "extract": null,
+      "id": "01_fill_operator_id",
+      "literal": null,
+      "locator": {
+        "description": "textbox 'Operator ID'",
+        "strategies": [
+          {
+            "frame": "",
+            "kind": "role_name",
+            "name": "Operator ID",
+            "role": "textbox"
+          },
+          {
+            "attr": "name",
+            "frame": "",
+            "kind": "attr",
+            "tag": "input",
+            "value": "operator_id"
+          },
+          {
+            "frame": "",
+            "kind": "css",
+            "value": "input[name=\"operator_id\"]"
+          }
+        ]
+      },
+      "notes": "Enter operator ID",
+      "param": "operator_id",
+      "risk": "reversible"
+    },
+    {
+      "action": "fill",
+      "checkpoint": null,
+      "extract": null,
+      "id": "02_fill_passcode",
+      "literal": null,
+      "locator": {
+        "description": "textbox 'Passcode'",
+        "strategies": [
+          {
+            "frame": "",
+            "kind": "role_name",
+            "name": "Passcode",
+            "role": "textbox"
+          },
+          {
+            "attr": "name",
+            "frame": "",
+            "kind": "attr",
+            "tag": "input",
+            "value": "passcode"
+          },
+          {
+            "frame": "",
+            "kind": "css",
+            "value": "input[name=\"passcode\"]"
+          }
+        ]
+      },
+      "notes": "Enter the passcode to sign in",
+      "param": "passcode",
+      "risk": "reversible"
+    },
+    {
+      "action": "click",
+      "checkpoint": {
+        "description": "navigated to the expected screen",
+        "kind": "url_contains",
+        "value": "/members/search"
+      },
+      "extract": null,
+      "id": "03_click_sign_in",
+      "literal": null,
+      "locator": {
+        "description": "button 'Sign In'",
+        "strategies": [
+          {
+            "frame": "",
+            "kind": "role_name",
+            "name": "Sign In",
+            "role": "button"
+          },
+          {
+            "frame": "",
+            "kind": "css",
+            "value": "input[type=\"submit\"][value=\"Sign In\"]"
+          },
+          {
+            "frame": "",
+            "kind": "text",
+            "value": "Sign In"
+          }
+        ]
+      },
+      "notes": "Click Sign In to log in",
+      "param": null,
+      "risk": "reversible"
+    },
+    {
+      "action": "fill",
+      "checkpoint": null,
+      "extract": null,
+      "id": "04_fill_member_number",
+      "literal": null,
+      "locator": {
+        "description": "textbox 'Member Number'",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Member Number",
+            "role": "textbox"
+          },
+          {
+            "attr": "name",
+            "frame": "name=mainframe",
+            "kind": "attr",
+            "tag": "input",
+            "value": "member_no"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "input[name=\"member_no\"]"
+          }
+        ]
+      },
+      "notes": "Enter the member ID to search for the member",
+      "param": "member_id",
+      "risk": "reversible"
+    },
+    {
+      "action": "click",
+      "checkpoint": {
+        "description": "the value supplied for member_id is now displayed",
+        "kind": "text_present",
+        "value": "{member_id}"
+      },
+      "extract": null,
+      "id": "05_click_search",
+      "literal": null,
+      "locator": {
+        "description": "button 'Search' in the row for Member Number",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Search",
+            "role": "button"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "row_role_name",
+            "name": "Search",
+            "role": "button",
+            "row": "Member Number"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "input[type=\"submit\"][value=\"Search\"]"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "text",
+            "value": "Search"
+          }
+        ]
+      },
+      "notes": "Click Search to find member 100237",
+      "param": null,
+      "risk": "reversible"
+    },
+    {
+      "action": "click",
+      "checkpoint": {
+        "description": "navigated to the expected screen",
+        "kind": "url_contains",
+        "value": "/members/{member_id}"
+      },
+      "extract": null,
+      "id": "06_click_open",
+      "literal": null,
+      "locator": {
+        "description": "link 'Open' in the row for {member_id}",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "row_role_name",
+            "name": "Open",
+            "role": "link",
+            "row": "{member_id}"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Open",
+            "role": "link"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "a[href=\"/members/{member_id}\"]"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "text",
+            "value": "Open"
+          }
+        ]
+      },
+      "notes": "Click Open to view member details and start creating a new Savings sub-account",
+      "param": null,
+      "risk": "reversible"
+    },
+    {
+      "action": "click",
+      "checkpoint": {
+        "description": "navigated to the expected screen",
+        "kind": "url_contains",
+        "value": "/members/{member_id}/subaccount"
+      },
+      "extract": null,
+      "id": "07_click_open_sub_account",
+      "literal": null,
+      "locator": {
+        "description": "button 'Open Sub-Account'",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Open Sub-Account",
+            "role": "button"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "input[type=\"submit\"][value=\"Open Sub-Account\"]"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "text",
+            "value": "Open Sub-Account"
+          }
+        ]
+      },
+      "notes": "Click Open Sub-Account to start creating a new Savings sub-account",
+      "param": null,
+      "risk": "reversible"
+    },
+    {
+      "action": "select",
+      "checkpoint": null,
+      "extract": null,
+      "id": "08_select_account_type",
+      "literal": null,
+      "locator": {
+        "description": "combobox 'Account Type'",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Account Type",
+            "role": "combobox"
+          },
+          {
+            "attr": "name",
+            "frame": "name=mainframe",
+            "kind": "attr",
+            "tag": "select",
+            "value": "acct_type"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "select[name=\"acct_type\"]"
+          }
+        ]
+      },
+      "notes": "Select Savings as the account type",
+      "param": "account_type",
+      "risk": "reversible"
+    },
+    {
+      "action": "fill",
+      "checkpoint": null,
+      "extract": null,
+      "id": "09_fill_initial_deposit",
+      "literal": null,
+      "locator": {
+        "description": "textbox 'Initial Deposit'",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Initial Deposit",
+            "role": "textbox"
+          },
+          {
+            "attr": "name",
+            "frame": "name=mainframe",
+            "kind": "attr",
+            "tag": "input",
+            "value": "deposit_amt"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "input[name=\"deposit_amt\"]"
+          }
+        ]
+      },
+      "notes": "Enter the initial deposit amount before continuing",
+      "param": "initial_deposit",
+      "risk": "reversible"
+    },
+    {
+      "action": "click",
+      "checkpoint": {
+        "description": "the expected screen is displayed",
+        "kind": "text_present",
+        "value": "Review Sub-Account Request"
+      },
+      "extract": null,
+      "id": "10_click_continue",
+      "literal": null,
+      "locator": {
+        "description": "button 'Continue'",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Continue",
+            "role": "button"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "input[type=\"submit\"][value=\"Continue\"]"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "text",
+            "value": "Continue"
+          }
+        ]
+      },
+      "notes": "Proceed to create the new sub-account",
+      "param": null,
+      "risk": "reversible"
+    },
+    {
+      "action": "click",
+      "checkpoint": {
+        "description": "navigated to the expected screen",
+        "kind": "url_contains",
+        "value": "/members/{member_id}/subaccount/confirm"
+      },
+      "extract": null,
+      "id": "11_click_submit_request",
+      "literal": null,
+      "locator": {
+        "description": "button 'Submit Request'",
+        "strategies": [
+          {
+            "frame": "name=mainframe",
+            "kind": "role_name",
+            "name": "Submit Request",
+            "role": "button"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "css",
+            "value": "input[type=\"submit\"][value=\"Submit Request\"]"
+          },
+          {
+            "frame": "name=mainframe",
+            "kind": "text",
+            "value": "Submit Request"
+          }
+        ]
+      },
+      "notes": "Click Submit Request to create the new Savings sub-account",
+      "param": null,
+      "risk": "irreversible"
+    },
+    {
+      "action": "extract",
+      "checkpoint": {
+        "description": "the screen is showing the field we are reading",
+        "kind": "text_present",
+        "value": "New Account Number"
+      },
+      "extract": {
+        "label": "New Account Number",
+        "locator": null,
+        "method": "labelled_value",
+        "output_name": "new_account_number",
+        "pattern": ""
+      },
+      "id": "12_extract_new_account_number",
+      "literal": null,
+      "locator": null,
+      "notes": "Capture the newly opened sub-account number",
+      "param": null,
+      "risk": "safe"
+    }
+  ],
+  "target": {
+    "app_name": "MeridianCore Servicing",
+    "entry_path": "/login",
+    "product_version_range": ">=8.0 <9.0",
+    "surface": "web",
+    "vendor_product": "meridiancore"
+  },
+  "version": 1
+}

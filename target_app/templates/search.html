@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ t.label('search_heading') }}</title>
+  <style>{% include "_legacy.css" %}</style>
+</head>
+<body>
+<div class="pad">
+
+{% if interstitial %}
+  <!-- Unexpected-but-known interstitial. Replay treats dismissing this as a
+       *recoverable* condition, not a failure. -->
+  <div class="msg">
+    <b>Scheduled Maintenance Notice</b><br>
+    A maintenance window is scheduled for this weekend. Acknowledge to continue.
+    <br><br>
+    <a href="{{ t.path('/maintenance/ack') }}">Acknowledge</a>
+  </div>
+{% endif %}
+
+<table class="l" width="100%"><tr><td class="hdr" style="background:{{ t.accent }};">
+  {{ t.label('search_heading') }}
+</td></tr></table>
+
+<br>
+<table class="l box" cellpadding="0" cellspacing="0">
+  <form method="post" action="{{ t.path('/members/search') }}">
+  <tr>
+    <td class="k">{{ t.label('member_number') }}</td>
+    <td><input type="text" name="member_no" size="18" value="{{ query|default('') }}"
+               aria-label="{{ t.label('member_number') }}" autocomplete="off"></td>
+    <td><input type="submit" value="{{ t.label('member_search_submit') }}"></td>
+  </tr>
+  </form>
+</table>
+
+{% if message %}
+  <div class="msg">{{ message }}</div>
+{% endif %}
+
+{% if results %}
+<br>
+<table class="grid" cellpadding="0" cellspacing="0">
+  <tr>
+    <th>{{ t.label('member_number') }}</th>
+    <th>Name</th>
+    <th>Status</th>
+    <th>Branch</th>
+    <th>&nbsp;</th>
+  </tr>
+  {% for m in results %}
+  <tr>
+    <td>{{ m.number }}</td>
+    <td>{{ m.name }}</td>
+    <td>{{ m.status }}</td>
+    <td>{{ m.branch }}</td>
+    <!-- The only handle on the row is its text. A locator has to anchor on
+         the member number cell to reach the right row's link. -->
+    <td><a href="{{ t.path('/members/' ~ m.number) }}">Open</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+</div>
+</body>
+</html>

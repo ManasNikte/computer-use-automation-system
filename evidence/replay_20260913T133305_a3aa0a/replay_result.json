@@ -1,0 +1,34 @@
+{
+  "business_outcome": null,
+  "capability": {
+    "id": "open_member_subaccount_llm",
+    "version": 1
+  },
+  "drift": [],
+  "duration_s": 102.75,
+  "escalation": {
+    "actions": [
+      {
+        "args": {
+          "name": "Submit Request"
+        },
+        "at": 1789320884.080357,
+        "detail": "clicked 'Submit Request' -> http://127.0.0.1:5075/members/100237/subaccount/confirm",
+        "ok": true,
+        "verb": "click"
+      }
+    ],
+    "notes": "operator completed the work manually",
+    "resolution": "completed_by_operator"
+  },
+  "evidence_dir": "/Users/manasnikte/Downloads/interface_AI/evidence/replay_20260913T133305_a3aa0a",
+  "failure": null,
+  "outputs": {
+    "new_account_number": "[REDACTED]"
+  },
+  "recoveries": [],
+  "run_id": "replay_20260913T133305_a3aa0a",
+  "status": "success",
+  "steps_completed": 12,
+  "steps_total": 12
+}

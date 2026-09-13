@@ -1,0 +1,61 @@
+{
+  "url": "http://127.0.0.1:5075/",
+  "frames": [
+    {
+      "frame": "",
+      "url": "http://127.0.0.1:5075/",
+      "controls": []
+    },
+    {
+      "frame": "name=navframe",
+      "url": "http://127.0.0.1:5075/nav",
+      "controls": [
+        {
+          "role": "link",
+          "name": "Sign Out",
+          "name_source": "text",
+          "value": "",
+          "enabled": true,
+          "tag": "a",
+          "type": "",
+          "name_attr": "",
+          "href": "/logout",
+          "css": "a[href=\"/logout\"]",
+          "row_anchor": "Meridian Credit Union | MeridianCore Servicing 8.2.1"
+        },
+        {
+          "role": "link",
+          "name": "Member Search",
+          "name_source": "text",
+          "value": "",
+          "enabled": true,
+          "tag": "a",
+          "type": "",
+          "name_attr": "",
+          "href": "/members/search",
+          "css": "a[href=\"/members/search\"]",
+          "row_anchor": "Member Search | Transactions | Reports"
+        }
+      ]
+    },
+    {
+      "frame": "name=mainframe",
+      "url": "http://127.0.0.1:5075/members/100237/subaccount/confirm",
+      "controls": [
+        {
+          "role": "link",
+          "name": "Return to Member Record",
+          "name_source": "text",
+          "value": "",
+          "enabled": true,
+          "tag": "a",
+          "type": "",
+          "name_attr": "",
+          "href": "/members/100237",
+          "css": "a[href=\"/members/100237\"]",
+          "row_anchor": ""
+        }
+      ]
+    }
+  ]
+}

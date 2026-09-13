@@ -1,0 +1,28 @@
+{
+  "business_outcome": null,
+  "capability": {
+    "id": "open_member_subaccount",
+    "version": 1
+  },
+  "drift": [],
+  "duration_s": 1.62,
+  "escalation": null,
+  "evidence_dir": "/Users/manasnikte/Downloads/interface_AI/evidence/5_replay_recovered_session_timeout",
+  "failure": null,
+  "outputs": {
+    "new_account_number": "[REDACTED]"
+  },
+  "recoveries": [
+    {
+      "action": "restart_from_step",
+      "attempt": 1,
+      "detail": "re-ran 2 step(s) to restore session state",
+      "rule": "reauthenticate_on_session_expiry",
+      "step_id": "03_click_sign_in"
+    }
+  ],
+  "run_id": "5_replay_recovered_session_timeout",
+  "status": "success",
+  "steps_completed": 12,
+  "steps_total": 12
+}

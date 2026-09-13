@@ -1,0 +1,23 @@
+{
+  "business_outcome": {
+    "description": "The signed-in operator lacks the entitlement for this action. The caller should route to a supervisor.",
+    "matched": "You are not authorized to open sub-accounts",
+    "name": "not_authorized",
+    "step_id": "08_select_account_type"
+  },
+  "capability": {
+    "id": "open_member_subaccount",
+    "version": 1
+  },
+  "drift": [],
+  "duration_s": 0.59,
+  "escalation": null,
+  "evidence_dir": "/Users/manasnikte/Downloads/interface_AI/evidence/4_replay_outcome_not_authorized",
+  "failure": null,
+  "outputs": {},
+  "recoveries": [],
+  "run_id": "4_replay_outcome_not_authorized",
+  "status": "business_outcome",
+  "steps_completed": 7,
+  "steps_total": 12
+}

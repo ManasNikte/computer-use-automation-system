@@ -1,0 +1,18 @@
+/* Deliberately period-accurate. Class names describe presentation, not
+   meaning -- there is nothing here an automation could sensibly target. */
+body { font-family: Verdana, Geneva, sans-serif; font-size: 11px; background: #eceff4; margin: 0; padding: 0; }
+table.l { border-collapse: collapse; }
+td { font-size: 11px; padding: 3px 6px; vertical-align: top; }
+.hdr { color: #ffffff; font-weight: bold; padding: 6px 10px; font-size: 12px; }
+.box { border: 1px solid #9aa5b1; background: #ffffff; }
+.box td.k { background: #dde3ea; font-weight: bold; white-space: nowrap; }
+.grid { border: 1px solid #9aa5b1; background: #ffffff; width: 100%; }
+.grid th { background: #dde3ea; font-size: 11px; text-align: left; padding: 4px 6px; border-bottom: 1px solid #9aa5b1; }
+.grid td { border-bottom: 1px solid #e2e6ea; }
+.msg { border: 1px solid #b08000; background: #fff8dc; padding: 6px 10px; margin: 8px 0; }
+.err { border: 1px solid #a02020; background: #ffeaea; color: #7a0000; padding: 6px 10px; margin: 8px 0; font-weight: bold; }
+.ok  { border: 1px solid #2d7a2d; background: #eaffea; color: #145214; padding: 6px 10px; margin: 8px 0; font-weight: bold; }
+input[type=text], input[type=password], select { font-family: Verdana; font-size: 11px; border: 1px solid #7b8794; padding: 2px; }
+input[type=submit] { font-family: Verdana; font-size: 11px; padding: 2px 10px; }
+a { color: #1f3864; }
+.pad { padding: 10px; }

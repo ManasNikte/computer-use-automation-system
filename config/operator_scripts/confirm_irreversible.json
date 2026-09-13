@@ -1,0 +1,19 @@
+{
+  "_comment": [
+    "A scripted operator session that reviews and approves an irreversible step.",
+    "",
+    "The operator issues no commands: they looked at the intervention request --",
+    "which carries the screenshot, the proposed action and the reason -- decided",
+    "the commit was correct, and handed control back. That is the real semantics",
+    "of 'confirm', and it is why the resolution is `resumed` rather than",
+    "`completed_by_operator`: the automation performs the step, with a human",
+    "having authorised it.",
+    "",
+    "Used to make discovery reproducible in CI and when regenerating evidence.",
+    "Interactively you would use --operator console, --operator web, or",
+    "--operator takeover instead."
+  ],
+  "commands": [],
+  "resolution": "resumed",
+  "notes": "Operator reviewed the irreversible sub-account commit and authorised it."
+}
