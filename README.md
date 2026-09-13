@@ -260,11 +260,3 @@ python -m cua.cli replay ... --inject slow,interstitial,session_timeout,app_erro
 
 `/_control/*` is on the policy's **denied** path list, so no capability can
 reach it even though it lives on an allowed host.
-
-## Ground rules
-
-No real credentials, no real PII, no third-party terms of service at risk:
-everything runs against a local, disposable Flask app with a synthetic member
-table. No secrets in the repo — provider keys come from the environment.
-# -computer-use-automation-system-using-groq-llm
-# -computer-use-automation-system-using-groq-llm
